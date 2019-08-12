@@ -1,5 +1,8 @@
 package com.sda.database;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bson.Document;
 
 import com.mongodb.MongoClient;
@@ -52,11 +55,10 @@ public class DatabaseAccess {
         }
     }
 
-    //fixme
-    public void updateDoctor(Document doctor) {
+    public void updateDoctor(Document doctor, List insertItems) {
         database.getCollection("doctori")
                 .updateOne(new Document("name", doctor.getString("name")),
-                        new Document("$push", doctor.append("pacienti",
-                                "{\"asd\":true")));
+                        new Document("$set", doctor.append("pacienti",
+                                new ArrayList<String>(insertItems))));
     }
 }

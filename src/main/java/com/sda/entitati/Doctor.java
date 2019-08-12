@@ -35,10 +35,10 @@ public class Doctor {
 
     public void addPatient(Pacient pacient) {
         Document doctor = db.findDocument(this.name);
-        ArrayList pacienti = (ArrayList) doctor.get("pacienti");
+        List pacienti = (ArrayList) doctor.get("pacienti");
         //daca nu exista in lista , il adaugam
         pacienti.add(pacient.toJson());
-        db.updateDoctor(doctor);
+        db.updateDoctor(doctor, pacienti);
     }
 
     public Document toDocument() {
