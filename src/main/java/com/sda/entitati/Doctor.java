@@ -37,8 +37,10 @@ public class Doctor {
         Document doctor = db.findDocument(this.name);
         List pacienti = (ArrayList) doctor.get("pacienti");
         //daca nu exista in lista , il adaugam
-        pacienti.add(pacient.toJson());
-        db.updateDoctor(doctor, pacienti);
+        if (!pacienti.contains(pacient.toJson())) {
+            pacienti.add(pacient.toJson());
+            db.updateDoctor(doctor, pacienti);
+        }
     }
 
     public Document toDocument() {

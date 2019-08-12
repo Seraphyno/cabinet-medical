@@ -29,6 +29,12 @@ public class DatabaseAccess {
         return db;
     }
 
+    public void printDoctors() {
+        for (Document document : collection.find(new Document())) {
+            System.out.println(document);
+        }
+    }
+
     public MongoDatabase getDatabase() {
         return database;
     }
@@ -60,5 +66,11 @@ public class DatabaseAccess {
                 .updateOne(new Document("name", doctor.getString("name")),
                         new Document("$set", doctor.append("pacienti",
                                 new ArrayList<String>(insertItems))));
+    }
+
+    public void printPatients() {
+        for (Document document : collection.find(new Document())) {
+            System.out.println(document.get("pacienti"));
+        }
     }
 }
