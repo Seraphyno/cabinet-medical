@@ -22,17 +22,12 @@ public class DatabaseAccess {
         this.collection = database.getCollection("doctori");
     }
 
+    //singleton pattern, making sure we have only 1 connection open
     public static DatabaseAccess getDatabaseAccess() {
         if (db == null) {
             db = new DatabaseAccess();
         }
         return db;
-    }
-
-    public void printDoctors() {
-        for (Document document : collection.find(new Document())) {
-            System.out.println(document);
-        }
     }
 
     public MongoDatabase getDatabase() {
@@ -62,15 +57,20 @@ public class DatabaseAccess {
     }
 
     public void updateDoctor(Document doctor, List insertItems) {
-        database.getCollection("doctori")
-                .updateOne(new Document("name", doctor.getString("name")),
-                        new Document("$set", doctor.append("pacienti",
-                                new ArrayList<String>(insertItems))));
+        collection.updateOne(new Document("name", doctor.getString("name")),
+                new Document("$set", doctor.append("pacienti",
+                        new ArrayList<String>(insertItems))));
     }
 
     public void printPatients() {
         for (Document document : collection.find(new Document())) {
             System.out.println(document.get("pacienti"));
+        }
+    }
+
+    public void printDoctors() {
+        for (Document document : collection.find(new Document())) {
+            System.out.println(document);
         }
     }
 }
