@@ -12,13 +12,13 @@ public class Doctor {
 
     private String name;
     private String specialitate;
-    private List<Pacient> pacienti;
+    private List<String> pacienti;
 
     public Doctor(String name, String specialitate) {
         this.name = name;
         this.specialitate = specialitate;
         this.pacienti = new ArrayList<>();
-        //todo - la crearea unui doctor trebuie salvat in db
+        db.saveDoctor(this.toDocument());
     }
 
     public String getName() {
@@ -29,17 +29,21 @@ public class Doctor {
         return specialitate;
     }
 
-    public List<Pacient> getPacienti() {
+    public List<String> getPacienti() {
         return pacienti;
     }
 
     public void addPatient(Pacient pacient) {
-        Document doctor = db.findDocument("doctori", this.name);
-        ArrayList<Pacient> pacienti = (ArrayList<Pacient>) doctor.get("pacienti");
+        Document doctor = db.findDocument(this.name);
+        ArrayList pacienti = (ArrayList) doctor.get("pacienti");
         //daca nu exista in lista , il adaugam
-        if (!pacienti.contains(pacient)) {
-            pacienti.add(pacient);
-            db.update(pacienti);
-        }
+        pacienti.add(pacient.toJson());
+        db.updateDoctor(doctor);
+    }
+
+    public Document toDocument() {
+        return new Document("name", name)
+                .append("specialitate", specialitate)
+                .append("pacienti", pacienti);
     }
 }

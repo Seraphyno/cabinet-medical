@@ -1,19 +1,26 @@
 package com.sda.entitati;
 
 public class Pacient {
-    private String nume;
+
+    private String name;
     private String diagnostic;
 
-    public Pacient(String nume, String diagnostic) {
-        this.nume = nume;
+    public Pacient(String name, String diagnostic) {
+        this.name = name;
         this.diagnostic = diagnostic;
     }
 
-    public String getNume() {
-        return nume;
+    public String getName() {
+        return name;
     }
 
     public String getDiagnostic() {
         return diagnostic;
+    }
+
+    public String toJson() {
+        return "{\"name\":" + name + "\"," +
+                "\"diagnostic\":\"" + diagnostic +
+                "\"}";
     }
 }

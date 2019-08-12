@@ -1,22 +1,22 @@
 package com.sda.database;
 
+import org.bson.Document;
+
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.sda.entitati.Pacient;
-import org.bson.Document;
-
-import java.util.ArrayList;
 
 public class DatabaseAccess {
+    private static DatabaseAccess db;
 
     private MongoClient client;
     private MongoDatabase database;
-    private static DatabaseAccess db;
+    private MongoCollection<Document> collection;
 
     private DatabaseAccess() {
         this.client = new MongoClient();
         this.database = client.getDatabase("clinica");
+        this.collection = database.getCollection("doctori");
     }
 
     public static DatabaseAccess getDatabaseAccess() {
@@ -30,27 +30,33 @@ public class DatabaseAccess {
         return database;
     }
 
-    public void closeClientConnection() {
-        client.close();
+    public static void closeClientConnection() {
+        db.client.close();
     }
 
     /**
-     * @param entityType doctori sau pacienti
-     * @param nume       numele persoanei cautate
-     * @return o persoana
+     * @param nume numele doctorului cautat
+     * @return un doctor, ca Document
      */
-    public Document findDocument(String entityType, String nume) {
-        String collectionName = "doctori";
-        if ("pacienti".equals(entityType)) {
-            collectionName = "pacienti";
-        }
-        MongoCollection<Document> collection = database.getCollection(collectionName);
-        return collection.find(new Document("nume", nume)).first();
+    public Document findDocument(String nume) {
+        return collection.find(new Document("name", nume)).first();
     }
 
-    public void update(ArrayList<Pacient> pacienti) {
-        MongoCollection<Document> doctori = database.getCollection("doctori");
-        //todo - complete the update
-        doctori.updateOne();
+    public void saveDoctor(Document doctor) {
+        Document findResult = findDocument(doctor.getString("name"));
+
+        if (findResult == null || findResult.isEmpty()) {
+            collection.insertOne(doctor);
+        } else {
+            System.err.println("Doctor already saved!");
+        }
+    }
+
+    //fixme
+    public void updateDoctor(Document doctor) {
+        database.getCollection("doctori")
+                .updateOne(new Document("name", doctor.getString("name")),
+                        new Document("$push", doctor.append("pacienti",
+                                "{\"asd\":true")));
     }
 }
